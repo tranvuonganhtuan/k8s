@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-deployment
+---
+apiVersion: apps/v1
+kind: Deamonset
+metadata:
+  name: fluentd-daemonset
+  labels:
+    app: fluentd
+  namespace: demo-deployment
+spec:
+  selector:
+    matchLabels:
+      name: fluentd
+    template:
+      metadata:
+        labels:
+          name: fluentd
+      spec:
+        containers:
+        - name: fluentd
+          image: fluent/fluentd:v1.11-debian-1
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 0.5
+          volumeMounts:
+          - name: varlog
+            mountPath: /var/log
+          - name: runlog
+            mountPath: /var/lib/docker/containers
+            readOnly: true
+        volumes:
+        - name: varlog
+          hostPath: 
+            path: /var/log
+        - name: runlog
+          hostPath: 
+            path: /var/lib/docker/containers

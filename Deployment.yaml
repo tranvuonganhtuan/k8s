@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-deployment
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  namespace: demo-deployment
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx   
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        imagePullPolicy: IfNotPresent
+        port:
+      - containerPort: 80
+      resources:
+        limits:
+          memory: "256Mi"
+          cpu: "128m"
+        requests:
+          memory: "128Mi"
+          cpu: "64m"
