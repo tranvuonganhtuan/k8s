@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: example-cronjob
+  namespace: demo-deployment
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels: 
+            app: example
+        spec:
+          containers:
+          - name: example
+            image: busybox
+            command: {"echo", "Hello, Kubernetes"}
+          restartPolicy: Never
