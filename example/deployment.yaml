@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: k8sstorage
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rwop-pv
+  namespace: k8sstorage
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: default
+  hostPath:
+    path: "/mnt/data" # Fixed path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rwop-pvc
+  namespace: k8sstorage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: rwop-pv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: k8sstorage
+  name: rwop-pod
+  labels:
+    app: rwop-pod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rwop-pod
+  template:
+    metadata:
+      labels:
+        app: rwop-pod
+    spec:
+      containers:
+      - name: rwop-pod
+        image: nginx
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 256Mi
+            cpu: 500m
+        volumeMounts:
+        - name: rwop-pv
+          mountPath: "/app/logs"
+      volumes:
+      - name: rwop-pv
+        persistentVolumeClaim:
+          claimName: rwop-pvc
+
+
+
