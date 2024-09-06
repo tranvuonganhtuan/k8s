@@ -1,0 +1,46 @@
+# apiVersion: v1
+# kind: Namespace 
+# metadata:
+#  name: example-ns
+# --- 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+  namespace: example-ns
+spec:
+  containers:
+  - name: my-container
+    image: tuantran/k8sd1:configmapsecrect
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+    - containerPort: 8080
+    envFrom: #using via variable
+    - configMapRef:
+        name: jsonfile
+# --- 
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: example-pod
+#   namespace: example-ns
+# spec:
+#   containers:
+#   - name: my-container
+#     image: my-image
+#     resources:
+#       limits:
+#         memory: "128Mi"
+#         cpu: "500m"
+#     ports:
+#     - containerPort: 8080
+#     volumeMounts: #using via volume
+#     - name: config-volume
+#       mountPath: /etc/config
+#   volumes:
+#   - name: config-volume
+#     configMap:
+#       name: example-configmap
